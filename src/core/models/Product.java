@@ -19,6 +19,10 @@ public class Product {
 		return id;
 	}
 	
+	public void setId(UUID id) {
+		this.id = id;
+	}
+	
 	public Manufacturer getManufacturer() {
 		return this.manufacturer;
 	}

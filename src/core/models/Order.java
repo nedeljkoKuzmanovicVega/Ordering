@@ -9,12 +9,20 @@ public class Order {
 	public Order(Customer customer) {
 		this.customer = customer;
 	}
-	
+
 	public UUID getId() {
 		return id;
 	}
 
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
 	public Customer getCustomer() {
 		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 }

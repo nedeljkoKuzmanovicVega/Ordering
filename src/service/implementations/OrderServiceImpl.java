@@ -7,6 +7,7 @@ import core.dto.OrderDto;
 import core.exceptions.PaymentMethodDoesNotExistException;
 import core.exceptions.ValidationException;
 import core.interfaces.repositories.CustomerRepository;
+import core.interfaces.repositories.OrderItemRepository;
 import core.interfaces.repositories.OrderRepository;
 import core.interfaces.repositories.ProductRepository;
 import core.interfaces.services.OrderService;
@@ -21,17 +22,19 @@ public class OrderServiceImpl implements OrderService {
 	private CustomerRepository customerRepository;
 	private ProductRepository productRepository;
 	private OrderRepository orderRepository;
+	private OrderItemRepository orderItemRepository;
 	private PaymentService paymentService;
 	
 	public OrderServiceImpl(CustomerRepository customerRepository, ProductRepository productRepository, OrderRepository orderRepository,
-			PaymentService paymentService) {
+			OrderItemRepository orderItemRepository ,PaymentService paymentService) {
 		this.customerRepository = customerRepository;
 		this.productRepository = productRepository;
 		this.orderRepository = orderRepository;
+		this.orderItemRepository = orderItemRepository;
 		this.paymentService = paymentService;
 	}
 
-	public void processOrder(OrderDto orderData) throws ValidationException, PaymentMethodDoesNotExistException {
+	public Order processOrder(OrderDto orderData) throws ValidationException, PaymentMethodDoesNotExistException {
 		if (orderData.getCustomerId() != null && orderData.getProductIds() != null && orderData.getPaymentMethod() != null) {
 			if (this.customerRepository.findById(orderData.getCustomerId()) != null) { // validate customer
 
@@ -42,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 						if (productId != null && this.productRepository.findById(productId) == null) { // check if product exists
 							
 							throw new ValidationException("Product with id: " + 1 + " does not exist");
-						} else if (this.productRepository.findById(productId).getPrice() > 0) {
+						} else if (this.productRepository.findById(productId).getPrice() < 0) {
 							throw new ValidationException("Product price with id: " + 1 + " does is not valid");
 						}
 					}
@@ -58,14 +61,16 @@ public class OrderServiceImpl implements OrderService {
 						float dsc = p.getDiscount();
 						float pr;
 						
-						if (dsc > 0) {
-							pr = p.getPrice() * p.getDiscount() / 100;
+						if (dsc > 0) { // calculate with discount if exists
+							pr = p.getPrice() - (p.getPrice() * p.getDiscount() / 100);
 						} else {
 							pr = p.getPrice();
 						}
 						
 						orderItems.add(new OrderItem(or.getId(), p.getId(), pr));
 					}
+					
+					orderItemRepository.put(orderItems);
 
 					// process the payment
 					switch (orderData.getPaymentMethod()) {
@@ -81,6 +86,8 @@ public class OrderServiceImpl implements OrderService {
 						default:
 							throw new PaymentMethodDoesNotExistException();
 					}
+					
+					return or;
 				} else {
 					throw new ValidationException("Products not provided");
 				}

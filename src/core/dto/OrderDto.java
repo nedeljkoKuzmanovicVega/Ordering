@@ -7,7 +7,7 @@ public class OrderDto {
 	public UUID customerId;
 	public ArrayList<UUID> productIds;
 	public Integer paymentMethod;
-	
+
 	public OrderDto(UUID customerId, ArrayList<UUID> productIds, Integer paymentMethod) {
 		this.customerId = customerId;
 		this.productIds = productIds;
@@ -15,14 +15,26 @@ public class OrderDto {
 	}
 	
 	public UUID getCustomerId() {
-		return this.customerId;
+		return customerId;
 	}
-	
+
+	public void setCustomerId(UUID customerId) {
+		this.customerId = customerId;
+	}
+
 	public ArrayList<UUID> getProductIds() {
-		return this.productIds;
+		return productIds;
+	}
+
+	public void setProductIds(ArrayList<UUID> productIds) {
+		this.productIds = productIds;
 	}
 	
 	public Integer getPaymentMethod() {
-		return this.paymentMethod;
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(Integer paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 }
