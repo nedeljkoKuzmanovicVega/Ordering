@@ -1,6 +1,7 @@
 package service.implementations;
 
 import java.util.UUID;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import core.dto.OrderDto;
@@ -59,13 +60,17 @@ public class OrderServiceImpl implements OrderService {
 					for (UUID productId : orderData.getProductIds()) {
 						Product p = this.productRepository.findById(productId);
 						float dsc = p.getDiscount();
-						float pr;
+						BigDecimal pr;
 						
 						if (dsc > 0) { // calculate with discount if exists
-							pr = p.getPrice() - (p.getPrice() * p.getDiscount() / 100);
+							pr = new BigDecimal(p.getPrice() - (p.getPrice() * p.getDiscount() / 100));
 						} else {
-							pr = p.getPrice();
+							pr = new BigDecimal(p.getPrice());
 						}
+						
+						// Adding the tax of 20%;
+						BigDecimal t = new BigDecimal(20);
+						pr = pr.add(pr.multiply(t.divide(new BigDecimal(100))));
 						
 						orderItems.add(new OrderItem(or.getId(), p.getId(), pr));
 					}

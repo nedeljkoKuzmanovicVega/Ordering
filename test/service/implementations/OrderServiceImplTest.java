@@ -309,9 +309,9 @@ public class OrderServiceImplTest {
 			private static final long serialVersionUID = 1L;
 
 			{
-				add(new OrderItem(ORDER_ID, PRODUCT_IDS.get(0), 90));
-				add(new OrderItem(ORDER_ID, PRODUCT_IDS.get(1), 125));
-				add(new OrderItem(ORDER_ID, PRODUCT_IDS.get(2), 160));
+				add(new OrderItem(ORDER_ID, PRODUCT_IDS.get(0), new BigDecimal(108)));
+				add(new OrderItem(ORDER_ID, PRODUCT_IDS.get(1), new BigDecimal(150)));
+				add(new OrderItem(ORDER_ID, PRODUCT_IDS.get(2), new BigDecimal(192)));
 			}
 		};
 		
@@ -325,7 +325,7 @@ public class OrderServiceImplTest {
 					.findFirst().get();
 			
 			if (actualOrderItem == null || 
-					actualOrderItem.getPriceAtOrderTime() != orderItem.getPriceAtOrderTime() ||
+					actualOrderItem.getPriceAtOrderTime().compareTo(orderItem.getPriceAtOrderTime()) != 0 ||
 					actualOrderItem.getOrderId() != orderItem.getOrderId()) {
 				return false;
 			}
